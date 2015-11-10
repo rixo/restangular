@@ -436,7 +436,13 @@ restangular.provider('Restangular', function() {
 
       typeTransformers.push(function(coll, elem) {
         if (_.isNull(isCollection) || (coll === isCollection)) {
-          return transformer(elem);
+          return $runtimeInjector.invoke(transformer, null, {
+            element: elem,
+            elem: elem,
+            model: elem,
+            collection: elem,
+            coll: elem
+          })
         }
         return elem;
       });
@@ -751,9 +757,13 @@ restangular.provider('Restangular', function() {
 
   Configurer.init(this, globalConfiguration);
 
+  var $runtimeInjector;
 
 
-  this.$get = ['$http', '$q', function($http, $q) {
+
+  this.$get = ['$http', '$q', '$injector', function($http, $q, $injector) {
+
+    $runtimeInjector = $injector;
 
     function createServiceForConfiguration(config) {
       var service = {};
